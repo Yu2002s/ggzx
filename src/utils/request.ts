@@ -1,7 +1,11 @@
 // 进行axios二次封装，使用请求与响应拦截器
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-// 使用axios对象的create方法创建一个aixos实例
+
+// 引入用户相关的仓库
+import useUserStore from '@/store/modules/user'
+
+// 使用axios对象的create方法创建一个axios实例
 const request = axios.create({
   // 基础路径
   baseURL: import.meta.env.VITE_APP_BASE_API, // 基础路径 /api
@@ -11,6 +15,11 @@ const request = axios.create({
 // 请求拦截器
 request.interceptors.request.use((config) => {
   // config 对象里面有个headers属性请求头，进程给服务器端携带公共的参数
+  // 获取用户相关的仓库：获取仓库内部的token，登录成功后携带给服务器
+  const userStore = useUserStore()
+  if (userStore.token) {
+    config.headers.token = userStore.token
+  }
   // 返回配置对象
   return config
 })
