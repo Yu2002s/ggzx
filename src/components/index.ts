@@ -10,13 +10,13 @@ type ComponentType = {
 const allGlobalComponents: ComponentType = { SvgIcon, Category }
 
 export default {
-  install(Vue: App) {
+  install(app: App) {
     Object.keys(allGlobalComponents).forEach((key: string) => {
-      Vue.component(key, allGlobalComponents[key])
+      app.component(key, allGlobalComponents[key])
     })
 
     for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-      Vue.component(key, component)
+      app.component(key, component)
     }
   },
 }

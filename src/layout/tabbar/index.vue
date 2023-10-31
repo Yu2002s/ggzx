@@ -24,12 +24,12 @@ defineOptions({
   height: 100%;
   display: flex;
   justify-content: space-between;
-  background-image: linear-gradient(
+  /* background-image: linear-gradient(
     to right,
     rgb(247, 210, 210),
     rgb(219, 193, 193),
     rgb(246, 215, 215)
-  );
+  ); */
 
   .tabbar-left {
     display: flex;

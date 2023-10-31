@@ -1,10 +1,10 @@
-import { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 
 export const constantRoute: RouteRecordRaw[] = [
   {
     // 主页
     path: '/',
-    name: 'layout',
+    name: 'Layout',
     redirect: '/home',
     meta: {
       title: '',
@@ -35,98 +35,6 @@ export const constantRoute: RouteRecordRaw[] = [
     },
   },
   {
-    path: '/acl',
-    name: 'acl',
-    redirect: '/acl/user',
-    component: () => import('@/layout/index.vue'),
-    meta: {
-      title: '权限管理',
-      hidden: false,
-      icon: 'Lock',
-    },
-    children: [
-      {
-        path: '/acl/user',
-        name: 'acl',
-        component: () => import('@/views/acl/user/index.vue'),
-        meta: {
-          title: '用户管理',
-          hidden: false,
-          icon: 'User',
-        },
-      },
-      {
-        path: '/acl/role',
-        name: 'role',
-        component: () => import('@/views/acl/role/index.vue'),
-        meta: {
-          title: '角色管理',
-          hidden: false,
-          icon: 'UserFilled',
-        },
-      },
-      {
-        path: '/acl/permission',
-        name: 'permission',
-        component: () => import('@/views/acl/permission/index.vue'),
-        meta: {
-          title: '菜单管理',
-          hidden: false,
-          icon: 'Monitor',
-        },
-      },
-    ],
-  },
-  {
-    path: '/product',
-    name: 'product',
-    redirect: '/product/trademark',
-    component: () => import('@/layout/index.vue'),
-    meta: {
-      title: '商品管理',
-      hidden: false,
-      icon: 'Goods',
-    },
-    children: [
-      {
-        path: '/product/trademark',
-        component: () => import('@/views/product/trademark/index.vue'),
-        name: 'trademark',
-        meta: {
-          title: '品牌管理',
-          icon: 'ShoppingCart',
-        },
-      },
-      {
-        path: '/product/attr',
-        component: () => import('@/views/product/attr/index.vue'),
-        name: 'attr',
-        meta: {
-          title: '属性管理',
-          icon: 'ChromeFilled',
-        },
-      },
-      {
-        path: '/product/spu',
-        component: () => import('@/views/product/spu/index.vue'),
-        name: 'spu',
-        meta: {
-          title: 'SPU管理',
-          icon: 'Calendar',
-        },
-      },
-      {
-        path: '/product/sku',
-        component: () => import('@/views/product/sku/index.vue'),
-        name: 'sku',
-        meta: {
-          title: 'SKU管理',
-          icon: 'Orange',
-        },
-      },
-    ],
-  },
-  {
     // 登录
     path: '/login',
     name: 'login',
@@ -148,6 +56,104 @@ export const constantRoute: RouteRecordRaw[] = [
       icon: 'DataLine',
     },
   },
+]
+
+export const asyncRoute: RouteRecordRaw[] = [
+  {
+    path: '/acl',
+    name: 'Acl',
+    redirect: '/acl/user',
+    component: () => import('@/layout/index.vue'),
+    meta: {
+      title: '权限管理',
+      hidden: false,
+      icon: 'Lock',
+    },
+    children: [
+      {
+        path: '/acl/user',
+        name: 'Acl',
+        component: () => import('@/views/acl/user/index.vue'),
+        meta: {
+          title: '用户管理',
+          hidden: false,
+          icon: 'User',
+        },
+      },
+      {
+        path: '/acl/role',
+        name: 'Role',
+        component: () => import('@/views/acl/role/index.vue'),
+        meta: {
+          title: '角色管理',
+          hidden: false,
+          icon: 'UserFilled',
+        },
+      },
+      {
+        path: '/acl/permission',
+        name: 'Permission',
+        component: () => import('@/views/acl/permission/index.vue'),
+        meta: {
+          title: '菜单管理',
+          hidden: false,
+          icon: 'Monitor',
+        },
+      },
+    ],
+  },
+  {
+    path: '/product',
+    name: 'Product',
+    redirect: '/product/trademark',
+    component: () => import('@/layout/index.vue'),
+    meta: {
+      title: '商品管理',
+      hidden: false,
+      icon: 'Goods',
+    },
+    children: [
+      {
+        path: '/product/trademark',
+        component: () => import('@/views/product/trademark/index.vue'),
+        name: 'Trademark',
+        meta: {
+          title: '品牌管理',
+          icon: 'ShoppingCart',
+        },
+      },
+      {
+        path: '/product/attr',
+        component: () => import('@/views/product/attr/index.vue'),
+        name: 'Attr',
+        meta: {
+          title: '属性管理',
+          icon: 'ChromeFilled',
+        },
+      },
+      {
+        path: '/product/spu',
+        component: () => import('@/views/product/spu/index.vue'),
+        name: 'Spu',
+        meta: {
+          title: 'SPU管理',
+          icon: 'Calendar',
+        },
+      },
+      {
+        path: '/product/sku',
+        component: () => import('@/views/product/sku/index.vue'),
+        name: 'Sku',
+        meta: {
+          title: 'SKU管理',
+          icon: 'Orange',
+        },
+      },
+    ],
+  },
+]
+
+export const anyRoute: RouteRecordRaw[] = [
   {
     // 任意
     path: '/:pathMatch(.*)*',

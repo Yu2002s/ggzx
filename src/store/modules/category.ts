@@ -1,5 +1,5 @@
 import { reqC1, reqC2, reqC3 } from '@/api/product/attr'
-import { CategroyResponseData } from '@/api/product/attr/type'
+import { CategoryResponseData } from '@/api/product/attr/type'
 import { defineStore } from 'pinia'
 import { CategoryState } from './types/type'
 // 商品分类全局组件的仓库
@@ -22,7 +22,7 @@ const useCategoryStore = defineStore('Category', {
     // 获取一级分类
     async getC1() {
       // 发请求获取一级分类数据
-      const result: CategroyResponseData = await reqC1()
+      const result: CategoryResponseData = await reqC1()
       if (result.code === 200) {
         this.c1Arr = result.data
       }

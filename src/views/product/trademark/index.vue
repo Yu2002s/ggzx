@@ -1,17 +1,12 @@
 <script setup lang="ts">
 import {
-  reqHasTrademark,
   reqAddOrUpdateTrademark,
   reqDeleteTrademark,
+  reqHasTrademark,
 } from '@/api/product/trademark'
-import {
-  Records,
-  Trademark,
-  TrademarkResponseData,
-} from '@/api/product/trademark/type'
-import { type UploadProps, ElMessage, type FormInstance } from 'element-plus'
-import { onUnmounted } from 'vue'
-import { onMounted, reactive, ref } from 'vue'
+import { Records, Trademark, TrademarkResponseData } from '@/api/product/trademark/type'
+import { ElMessage, type FormInstance, type UploadProps } from 'element-plus'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 
 const dialogFormVisible = ref<boolean>(false)
 
@@ -36,10 +31,7 @@ const formRef = ref<FormInstance>()
 // 获取已有品牌的接口封装为一个函数，在任何情况下获取数据，调用函数即可
 const getHasTrademark = async (pager = 1) => {
   pageNo.value = pager
-  const result: TrademarkResponseData = await reqHasTrademark(
-    pageNo.value,
-    limit.value,
-  )
+  const result: TrademarkResponseData = await reqHasTrademark(pageNo.value, limit.value)
   if (result.code === 200) {
     // 存储已有品牌的数据
     total.value = result.data.total
@@ -116,7 +108,7 @@ const confirm = async () => {
     cancel()
     ElMessage.success('操作成功')
     // 再次发起请求，获取已有品牌数据
-    getHasTrademark(trademarkParams.id ? pageNo.value : 1)
+    await getHasTrademark(trademarkParams.id ? pageNo.value : 1)
   } else {
     cancel()
     ElMessage.error('操作失败')
@@ -126,7 +118,7 @@ const confirm = async () => {
 // 图片上传成功的钩子
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
   response: any,
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
   _: any,
 ) => {
   // response: 当前这次上传图片服务器返回的结
@@ -189,9 +181,7 @@ const rules = {
     // trigger 触发校验规则时机
     { required: true, trigger: 'blur', validator: validateTrademarkName },
   ],
-  logoUrl: [
-    { required: true, trigger: 'change', validator: validateTrademarkLogo },
-  ],
+  logoUrl: [{ required: true, trigger: 'change', validator: validateTrademarkLogo }],
 }
 
 // 气泡确认框确定按钮回调
@@ -201,9 +191,7 @@ const removeTrademark = async (id: number) => {
     // 删除成功的提示信息
     ElMessage.success('删除品牌成功')
     // 再次获取已有品牌数据
-    getHasTrademark(
-      trademarkArr.value.length > 1 ? pageNo.value : pageNo.value - 1,
-    )
+    getHasTrademark(trademarkArr.value.length > 1 ? pageNo.value : pageNo.value - 1)
   } else {
     ElMessage.error('删除品牌失败')
   }
@@ -214,7 +202,7 @@ const removeTrademark = async (id: number) => {
   <div>
     <el-card class="box-card">
       <!-- 卡片顶部的添加品牌按钮 -->
-      <el-button type="primary" icon="Plus" @click="addTrademark">
+      <el-button v-has="`btn.Trademark.add`" type="primary" icon="Plus" @click="addTrademark">
         添加品牌
       </el-button>
       <!-- 表格组件，用于展示已有品牌数据 -->
@@ -226,28 +214,14 @@ const removeTrademark = async (id: number) => {
         width 列表的宽度
         align 列表的对齐方式
      -->
-      <el-table
-        style="margin: 10px 0"
-        border
-        :data="trademarkArr"
-        :page-count="9"
-      >
-        <el-table-column
-          label="序号"
-          width="80px"
-          align="center"
-          type="index"
-        ></el-table-column>
+      <el-table style="margin: 10px 0" border :data="trademarkArr" :page-count="9">
+        <el-table-column label="序号" width="80px" align="center" type="index"></el-table-column>
         <!-- table-cloumn:默认展示数据是div -->
         <el-table-column label="品牌名称" prop="tmName"></el-table-column>
         <el-table-column label="品牌LOGO">
           <template v-slot="{ row }">
             <img
-              :src="
-                row.logoUrl.startsWith('http')
-                  ? row.logoUrl
-                  : 'http://' + row.logoUrl
-              "
+              :src="row.logoUrl.startsWith('http') ? row.logoUrl : 'http://' + row.logoUrl"
               style="width: 100px; height: 100px; object-fit: cover"
               alt="图片不存在"
             />
@@ -301,21 +275,10 @@ const removeTrademark = async (id: number) => {
     <!-- v-model属性用于控制对话框显示与隐藏 
     title是设置左上角标题的
   -->
-    <el-dialog
-      v-model="dialogFormVisible"
-      :title="trademarkParams.id ? '修改品牌' : '添加品牌'"
-    >
-      <el-form
-        style="width: 80%"
-        :model="trademarkParams"
-        :rules="rules"
-        ref="formRef"
-      >
+    <el-dialog v-model="dialogFormVisible" :title="trademarkParams.id ? '修改品牌' : '添加品牌'">
+      <el-form style="width: 80%" :model="trademarkParams" :rules="rules" ref="formRef">
         <el-form-item label="品牌名称" label-width="100px" prop="tmName">
-          <el-input
-            placeholder="请输入品牌名称"
-            v-model="trademarkParams.tmName"
-          ></el-input>
+          <el-input placeholder="请输入品牌名称" v-model="trademarkParams.tmName"></el-input>
         </el-form-item>
         <el-form-item label="品牌LOGO" label-width="100px" prop="logoUrl">
           <!-- action:上传文件地址 -->
@@ -326,11 +289,7 @@ const removeTrademark = async (id: number) => {
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img
-              v-if="trademarkParams.logoUrl"
-              :src="trademarkParams.logoUrl"
-              class="avatar"
-            />
+            <img v-if="trademarkParams.logoUrl" :src="trademarkParams.logoUrl" class="avatar" />
             <el-icon v-else class="avatar-uploader-icon">
               <Plus />
             </el-icon>

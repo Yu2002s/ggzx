@@ -2,9 +2,12 @@
   <div>
     <!-- 三级分类全局组件 -->
     <el-card>
-      <el-form :inline="true">
+      <el-form :inline="true" :disabled="scene === 1">
         <el-form-item label="一级分类">
-          <el-select v-model="categoryStore.c1Id" @change="handler">
+          <el-select
+            v-model="categoryStore.c1Id"
+            @change="handler"
+          >
             <el-option
               v-for="c1 in categoryStore.c1Arr"
               :key="c1.id"
@@ -51,6 +54,9 @@ import useCategoryStore from '@/store/modules/category'
 
 const categoryStore = useCategoryStore()
 
+// 接受父组件传递过来的
+defineProps<{scene: number}>()
+
 // 引入组件挂载完毕的方法
 onMounted(() => {
   getC1()
@@ -64,12 +70,18 @@ const getC1 = () => {
 
 // 此方法即为一级分类下拉菜单change事件，当选中值的时候触发，保证一级分类的id有了
 const handler = () => {
+  // 需要将二级三级数据清空
+  categoryStore.c2Id = ''
+  categoryStore.c3Id = ''
+  categoryStore.c3Arr = []
   // 通知仓库获取二级分类数据
   categoryStore.getC2()
 }
 
 // 二级分类下拉菜单change事件
 const handler2 = () => {
+  // 清理三级分类的数据
+  categoryStore.c3Id = ''
   categoryStore.getC3()
 }
 

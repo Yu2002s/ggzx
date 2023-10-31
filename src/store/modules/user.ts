@@ -3,7 +3,7 @@ import {
   LoginResponseData,
   ResponseData,
   UserInfoResponseData,
-} from './../../api/user/types'
+} from '@/api/user/types.ts'
 // import type { LoginFrom, LoginResponseData } from '@/api/user/types'
 // 创建用户相关的小仓库
 
@@ -13,7 +13,24 @@ import type { UserState } from './types/type'
 // 引入操作本地存储的方法
 import { GET_TOKEN, REMOVE_TOKEN, SET_TOKEN } from '@/utils/token'
 // 引入路由（常量）
-import { constantRoute } from '@/router/routes.ts'
+import { constantRoute, asyncRoute, anyRoute } from '@/router/routes.ts'
+import { RouteRecordRaw } from 'vue-router'
+import router from '@/router'
+// 引入深拷贝方法
+// @ts-ignore
+import cloneDeep from 'lodash/cloneDeep'
+
+// 用于过滤当前用户用于展示的路由
+function filterAsyncRoute(asyncRoute: RouteRecordRaw[], routes: string[]) {
+  return asyncRoute.filter(item => {
+    if (routes.includes(item.name!!.toString())) {
+      if (item.children && item.children.length > 0) {
+         item.children = filterAsyncRoute(item.children, routes)
+      }
+      return true
+    }
+  })
+}
 
 const useUserStore = defineStore('User', {
   // 小仓库，存储数据的地方
@@ -23,6 +40,7 @@ const useUserStore = defineStore('User', {
       menuRoutes: constantRoute, // 仓库存储菜单需要的数组（路由）
       username: '',
       avatar: '',
+      buttons: []
     }
   },
   // 处理异步|逻辑的地方
@@ -48,6 +66,17 @@ const useUserStore = defineStore('User', {
       if (result.code === 200) {
         this.username = result.data.name
         this.avatar = result.data.avatar
+        this.buttons = result.data.buttons
+        // 计算当前用户需要展示的异步路由
+        // 使用深拷贝 不影响原数据
+        const userAsyncRoute = filterAsyncRoute(cloneDeep(asyncRoute), result.data.routes)
+        // 菜单需要的数据
+        this.menuRoutes = [...constantRoute, ...userAsyncRoute, ...anyRoute]
+        // 目前路由器管理的只有常量路由；用户计算完毕的异步路由需要动态添加
+        const routes = [...userAsyncRoute, ...anyRoute]
+        routes.forEach((route: any) => {
+          router.addRoute(route)
+        })
         return 'ok'
       } else {
         return Promise.reject(new Error(result.message))
@@ -59,11 +88,16 @@ const useUserStore = defineStore('User', {
       const result: ResponseData = await logout()
       if (result.code === 200) {
         // 目前没有mock接口：退出登录接口（通知服务器当前token已失效）
-        this.token = ''
+        /*this.token = ''
         this.username = ''
-        this.avatar = ''
-        // 清除token
+        this.avatar = ''*/
         REMOVE_TOKEN()
+        this.$reset()
+        const routes = [...asyncRoute, ...anyRoute]
+        routes.forEach(item => {
+          router.removeRoute(item.name!!)
+        })
+        // 清除token
         return 'ok'
       }
       return Promise.reject(new Error(result.message))
